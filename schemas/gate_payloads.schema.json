@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datn2.local/schemas/gate_payloads.schema.json",
+  "title": "DATN2 Gate Payloads Schema",
+  "description": "Machine-readable JSON Schema (Draft 2020-12) for validating DATN2 gate ingest, status, latch, security alert, and parking record payloads.",
+  "oneOf": [
+    { "$ref": "#/$defs/DualFrameIngestRequest" },
+    { "$ref": "#/$defs/GateStatusResponse" },
+    { "$ref": "#/$defs/LatchState" },
+    { "$ref": "#/$defs/SecurityAlert" },
+    { "$ref": "#/$defs/ParkingRecordRow" }
+  ],
+  "$defs": {
+    "DualFrameIngestRequest": {
+      "type": "object",
+      "description": "Request body for POST /api/camera/browser-frame.",
+      "additionalProperties": false,
+      "properties": {
+        "cam1_image": {
+          "type": ["string", "null"],
+          "maxLength": 2500000,
+          "description": "Base64 JPEG or data URL from Cam 1 (max 2,500,000 chars)."
+        },
+        "cam2_image": {
+          "type": ["string", "null"],
+          "maxLength": 2500000,
+          "description": "Base64 JPEG or data URL from Cam 2 (max 2,500,000 chars)."
+        }
+      }
+    },
+    "PlateOverlayBox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x1", "y1", "x2", "y2", "label", "valid"],
+      "properties": {
+        "x1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "x2": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y2": { "type": "number", "minimum": 0, "maximum": 1 },
+        "label": { "type": "string" },
+        "valid": { "type": "boolean" }
+      }
+    },
+    "FaceOverlayBox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x1", "y1", "x2", "y2", "label"],
+      "properties": {
+        "x1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y1": { "type": "number", "minimum": 0, "maximum": 1 },
+        "x2": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y2": { "type": "number", "minimum": 0, "maximum": 1 },
+        "label": { "type": "string" }
+      }
+    },
+    "OverlayBoxes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["plates", "faces"],
+      "properties": {
+        "plates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PlateOverlayBox" }
+        },
+        "faces": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/FaceOverlayBox" }
+        }
+      }
+    },
+    "VoteInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate", "vote_count", "sample_count", "vote_share"],
+      "properties": {
+        "candidate": { "type": "string" },
+        "vote_count": { "type": "integer", "minimum": 1 },
+        "sample_count": { "type": "integer", "minimum": 1 },
+        "vote_share": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "CameraUnitStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "active",
+        "mode",
+        "device_index",
+        "current_plates",
+        "current_faces",
+        "ambiguous_frame",
+        "vote"
+      ],
+      "properties": {
+        "active": { "type": "boolean" },
+        "mode": { "type": "string" },
+        "device_index": { "type": "integer" },
+        "current_plates": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "current_faces": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ambiguous_frame": { "type": "boolean" },
+        "vote": {
+          "oneOf": [
+            { "$ref": "#/$defs/VoteInfo" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "LatchState": {
+      "type": "object",
+      "description": "Two-Phase Latch status payload exposed when waiting up to 4.0s for a sharp face on required_face_cam.",
+      "additionalProperties": false,
+      "required": [
+        "direction",
+        "plate_number",
+        "plate_cam",
+        "required_face_cam",
+        "remaining_seconds",
+        "sampling_face"
+      ],
+      "properties": {
+        "direction": {
+          "type": "string",
+          "enum": ["IN", "OUT"]
+        },
+        "plate_number": {
+          "type": "string",
+          "minLength": 1
+        },
+        "plate_cam": {
+          "type": "integer",
+          "enum": [1, 2]
+        },
+        "required_face_cam": {
+          "type": "integer",
+          "enum": [1, 2]
+        },
+        "remaining_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "sampling_face": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SecurityAlert": {
+      "type": "object",
+      "description": "Top-up Security Alert payload shown when an OUT vehicle has FaceNet similarity < 0.65 or missing entry embedding.",
+      "additionalProperties": false,
+      "required": ["plate_number", "entry_time", "match_score_pct"],
+      "properties": {
+        "plate_number": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entry_time": {
+          "type": "string",
+          "minLength": 1
+        },
+        "match_score_pct": {
+          "type": "string",
+          "pattern": "^[0-9]+%$"
+        }
+      }
+    },
+    "GateFeedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "message", "expires_at"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["success", "warn", "error", "info"]
+        },
+        "message": { "type": "string" },
+        "expires_at": { "type": "number" }
+      }
+    },
+    "GateStatusResponse": {
+      "type": "object",
+      "description": "Response payload for GET /api/camera/status and nested status in DualFrameIngestResponse.",
+      "additionalProperties": false,
+      "required": [
+        "running",
+        "committing",
+        "cam1",
+        "cam2",
+        "latched",
+        "security_alert",
+        "gate_feedback",
+        "ambiguous_frame",
+        "error",
+        "records_version",
+        "database_ready",
+        "models_ready",
+        "face_match_threshold"
+      ],
+      "properties": {
+        "running": { "type": "boolean" },
+        "committing": { "type": "boolean" },
+        "cam1": { "$ref": "#/$defs/CameraUnitStatus" },
+        "cam2": { "$ref": "#/$defs/CameraUnitStatus" },
+        "latched": {
+          "oneOf": [
+            { "$ref": "#/$defs/LatchState" },
+            { "type": "null" }
+          ]
+        },
+        "security_alert": {
+          "oneOf": [
+            { "$ref": "#/$defs/SecurityAlert" },
+            { "type": "null" }
+          ]
+        },
+        "gate_feedback": {
+          "oneOf": [
+            { "$ref": "#/$defs/GateFeedback" },
+            { "type": "null" }
+          ]
+        },
+        "ambiguous_frame": { "type": "boolean" },
+        "error": { "type": ["string", "null"] },
+        "records_version": { "type": "integer", "minimum": 0 },
+        "database_ready": { "type": "boolean" },
+        "models_ready": { "type": "boolean" },
+        "face_match_threshold": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "ParkingRecordRow": {
+      "type": "object",
+      "description": "Formatted parking record row emitted by api/presenters.py for history, overview, and session-case endpoints.",
+      "additionalProperties": false,
+      "required": [
+        "ID",
+        "Biển số",
+        "direction_code",
+        "parking_status_code",
+        "entry_record_id",
+        "face_match_score",
+        "Luồng",
+        "Trạng thái bãi",
+        "Thời gian nhận diện",
+        "Khuôn mặt",
+        "Đối chiếu",
+        "plate_image",
+        "face_image"
+      ],
+      "properties": {
+        "ID": { "type": "integer", "minimum": 1 },
+        "Biển số": { "type": "string", "minLength": 1 },
+        "direction_code": {
+          "type": "string",
+          "enum": ["IN", "OUT"]
+        },
+        "parking_status_code": {
+          "type": "string",
+          "enum": ["IN_PARKING", "COMPLETED", "EXITED"]
+        },
+        "entry_record_id": { "type": ["integer", "null"] },
+        "face_match_score": {
+          "type": ["number", "null"],
+          "minimum": -1,
+          "maximum": 1
+        },
+        "Luồng": {
+          "type": "string",
+          "enum": ["Vào bãi", "Ra bãi"]
+        },
+        "Trạng thái bãi": {
+          "type": "string",
+          "enum": ["Đang gửi", "Đã lấy xe", "Đã ra bãi"]
+        },
+        "Thời gian nhận diện": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+        },
+        "Khuôn mặt": { "type": "string" },
+        "Đối chiếu": { "type": "string" },
+        "plate_image": { "type": ["string", "null"] },
+        "face_image": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
