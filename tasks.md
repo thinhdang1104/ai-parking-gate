@@ -28,13 +28,13 @@
 - [x] **T2.6** Viết tests cho Presenter, Repository & WarmDatabaseMirror (`tests/unit/test_presenters.py`, `tests/integration/test_mysql_repository.py`, `tests/integration/test_warm_mirror.py`) — *Deps: T2.3, T2.4, T2.5* · *Verify: `pytest` pass 100%*
 
 ## Phase 3: Tầng AI Adapters & Services Điều phối
-- [ ] **T3.1** Viết `src/backend/ai/plate_detector.py` (YOLOv8 plate + char detector, hỗ trợ batch 2 ảnh) — *Deps: T1.3, T1.5*
-- [ ] **T3.2** Viết `src/backend/ai/face_service.py` (MTCNN + InceptionResnetV1 vggface2, fallback crop 160x160, tự chọn CUDA/CPU hoặc ép CPU khi `FORCE_CPU=1`) — *Deps: T1.2, T1.5*
-- [ ] **T3.3** Viết `src/backend/services/camera_session.py` (`CameraUnitState` & `CameraSessionManager` bật/tắt độc lập 2 cam) — *Deps: T1.2, T1.4*
-- [ ] **T3.4** Viết `src/backend/services/latch_coordinator.py` (Two-Phase Latch 4s, pre-latch lookback 1.8s, swapped-plate cancel, sharpness tier check) — *Deps: T1.5, T3.3*
-- [ ] **T3.5** Viết `src/backend/services/management_service.py` (overview cache, session-case cache, version bump, DB reconnect background loop) — *Deps: T2.3, T2.5*
-- [ ] **T3.6** Viết `src/backend/services/gate_service.py` (ingest dual frames, smart 2-cam scheduling, FaceNet matching, Security Alert, async DB commit executor an toàn) — *Deps: T3.1, T3.2, T3.4, T3.5*
-- [ ] **T3.7** Viết regression & integration tests (`tests/integration/test_gate_service.py`, `tests/integration/test_management_service.py`) — *Deps: T3.6* · *Verify: pass toàn bộ regression scenarios*
+- [x] **T3.1** Viết `src/backend/ai/plate_detector.py` (YOLOv8 plate + char detector, hỗ trợ batch 2 ảnh) — *Deps: T1.3, T1.5*
+- [x] **T3.2** Viết `src/backend/ai/face_service.py` (MTCNN + InceptionResnetV1 vggface2, fallback crop 160x160, tự chọn CUDA/CPU hoặc ép CPU khi `FORCE_CPU=1`) — *Deps: T1.2, T1.5*
+- [x] **T3.3** Viết `src/backend/services/camera_session.py` (`CameraUnitState` & `CameraSessionManager` bật/tắt độc lập 2 cam) — *Deps: T1.2, T1.4*
+- [x] **T3.4** Viết `src/backend/services/latch_coordinator.py` (Two-Phase Latch 4s, pre-latch lookback 1.8s, swapped-plate cancel, sharpness tier check) — *Deps: T1.5, T3.3*
+- [x] **T3.5** Viết `src/backend/services/management_service.py` (overview cache, session-case cache, version bump, DB reconnect background loop) — *Deps: T2.3, T2.5*
+- [x] **T3.6** Viết `src/backend/services/gate_service.py` (ingest dual frames, smart 2-cam scheduling, FaceNet matching, Security Alert, async DB commit executor an toàn) — *Deps: T3.1, T3.2, T3.4, T3.5*
+- [x] **T3.7** Viết regression & integration tests (`tests/integration/test_gate_service.py`, `tests/integration/test_management_service.py`) — *Deps: T3.6* · *Verify: pass toàn bộ regression scenarios*
 
 ## Phase 4: Tầng HTTP FastAPI & API Tests
 - [ ] **T4.1** Viết `src/backend/api/schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py` — *Deps: T3.5, T3.6*

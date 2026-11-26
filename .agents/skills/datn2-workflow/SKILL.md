@@ -12,7 +12,7 @@ Follow this strict loop for every task in `C:\Study\DATN2`:
 
 ## 1. Hard Boundaries
 - **NEVER modify, create, or delete any file in `C:\Study\DATN`** (strictly read-only reference).
-- **Single Responsibility & File Size**: Every `.py` and `.js` file under `src/` must stay `<= 400` lines (target 100–350 lines).
+- **Single Responsibility & Readability**: Organize every `.py` and `.js` module around one clear responsibility with clean, idiomatic multi-line formatting (no artificial per-file line-count cap).
 - **Pure Domain Layer**: `src/backend/domain/` must never import `fastapi`, `pydantic`, `mysql`, `ultralytics`, `torch`, `facenet_pytorch`, `uvicorn`, or `starlette`.
 - **Schema-First Contracts**: Any REST endpoint or MySQL table change must match `schemas/openapi.yaml`, `schemas/gate_payloads.schema.json`, and `schemas/mysql_schema.sql`.
 

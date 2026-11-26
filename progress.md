@@ -2,8 +2,8 @@
 
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
-**Giai đoạn hiện tại:** Hoàn tất Phase 2 (`T2.1`–`T2.6` — MySQL Storage, WarmDatabaseMirror, Demo Seeder & API Presenters)  
-**Trạng thái tổng thể:** `17 / 27` tasks hoàn tất (+ 5/5 trụ cột AI-Native nâng cấp 6 cổng) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`42 passed in 0.89s`). Sẵn sàng bước vào **Phase 3 (T3.1–T3.7: AI Adapters & Services Điều phối)**.
+**Giai đoạn hiện tại:** Hoàn tất Phase 3 (`T3.1`–`T3.7` — AI Adapters & Services Điều phối)  
+**Trạng thái tổng thể:** `24 / 36` tasks trong kế hoạch (`24` đã xong ở Phases 0–3, còn Phases 4–6: `12` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`55 passed in 7.07s`). Đang tiến hành **Phase 4 (T4.1–T4.3: Tầng HTTP FastAPI & API/E2E Tests)**.
 
 ---
 
@@ -31,18 +31,22 @@
   - Bổ sung 2 project skills: `.agents/skills/datn2-contract-guard/SKILL.md`, `.agents/skills/datn2-cv-eval/SKILL.md`.
   - Bổ sung Section `2.1` Bảng chuyển trạng thái Two-Phase Latch / Async Commit / Security Alert vào `spec.md`.
   - Cấu hình `ruff` (`pyproject.toml`, `.github/workflows/ci.yml`), nâng `scripts/verify.ps1` lên 6 cổng và khóa Schema/API Drift bằng `tests/unit/test_schema_contract_drift.py`.
+- **[Phase 3 — T3.1 -> T3.7]** Hoàn tất tầng AI Adapters & Services điều phối (gỡ bỏ giới hạn cứng số dòng/file theo yêu cầu người dùng, giữ Single Responsibility):
+  - `src/backend/ai/{plate_detector,face_service}.py` (YOLOv8 batch 2 ảnh + FaceNet 512-D với graceful degradation).
+  - `src/backend/services/{camera_session,latch_coordinator,management_service,gate_pipeline,gate_service}.py` (Latch 4s, pre-latch 1.8s, Security Alert approve/reject, async DB commit an toàn khi tắt cam/server).
+  - Bộ test tích hợp & regression (`test_management_service.py`, `test_gate_service.py`) nâng tổng số test pass lên `55 / 55`.
 - Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
 
 ---
 
 ## 2. Việc đang làm
-- Sẵn sàng triển khai **Phase 3 (`T3.1`–`T3.7`)**: AI Adapters (`YOLOv8` batch & `FaceNet 512-D`) và Services điều phối (`CameraSessionManager`, `LatchCoordinator`, `ManagementService`, `GateService`).
+- Triển khai **Phase 4 (`T4.1`–`T4.3`)**: Tầng HTTP FastAPI (`schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py`), DI entrypoint `src/backend/main.py` kèm `/api/health`, `/api/metrics`, `X-Request-ID` & bộ API/E2E tests.
 
 ---
 
 ## 3. Bước tiếp theo ngay sau khi được duyệt
-1. **[Phase 3 — T3.1 -> T3.7]** Viết `src/backend/ai/{plate_detector,face_service}.py`, `src/backend/services/{camera_session,latch_coordinator,management_service,gate_service}.py` và regression/integration tests.
-2. **[Phase 4 — T4.1 -> T4.3]** Viết tầng HTTP FastAPI (`schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py`, `main.py`) & API/E2E tests.
+1. **[Phase 4 — T4.1 -> T4.3]** Hoàn tất FastAPI routes, DI container & E2E tests (`test_api_routes.py`, `test_full_parking_flow.py`).
+2. **[Phase 5 — T5.1 -> T5.5]** Viết lại Frontend theo ES Modules (`11 JS + 4 CSS`) và kiểm thử trực quan.
 
 ---
 

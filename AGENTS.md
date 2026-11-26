@@ -31,7 +31,7 @@ Mọi thay đổi mã nguồn đều tuân thủ 4 nguyên tắc sau:
    - Viết lượng code tối thiểu giải quyết đúng bài toán; không tạo abstraction/framework thừa chỉ dùng một lần.
    - Không cài thêm thư viện nặng (như React/Webpack/SQLAlchemy) nếu Vanilla ES Modules và `mysql-connector-python` đã giải quyết sạch sẽ.
 3. **Surgical Changes (Chỉnh sửa gọn, đúng phạm vi)**:
-   - Mỗi module chỉ đảm nhiệm một trách nhiệm rõ ràng (Single Responsibility), giữ độ dài mục tiêu **100–350 dòng/file** (tránh tuyệt đối God file > 500 dòng).
+   - Mỗi module chỉ đảm nhiệm một trách nhiệm rõ ràng (Single Responsibility), ưu tiên code sạch và dễ đọc (không áp đặt giới hạn cứng số dòng/file).
    - Không chỉnh sửa lan man các module không liên quan tới task hiện tại; tự dọn sạch import/biến/hàm thừa sau khi sửa.
 4. **Goal-Driven Execution (Thực thi hướng mục tiêu & Kiểm chứng)**:
    - Mọi task phải có tiêu chí kiểm chứng cụ thể (`[Bước] -> verify: [Lệnh test/check]`).

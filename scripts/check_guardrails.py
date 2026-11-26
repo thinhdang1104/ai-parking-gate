@@ -10,7 +10,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = ROOT / "src"
 DOMAIN_DIR = SRC_DIR / "backend" / "domain"
 
-MAX_LINES_PER_FILE = 400
 FORBIDDEN_DOMAIN_IMPORTS = {
     "fastapi",
     "uvicorn",
@@ -22,22 +21,6 @@ FORBIDDEN_DOMAIN_IMPORTS = {
     "facenet_pytorch",
     "gradio",
 }
-
-
-def check_file_sizes() -> list[str]:
-    errors: list[str] = []
-    if not SRC_DIR.exists():
-        return errors
-    for path in sorted(SRC_DIR.rglob("*")):
-        if not path.is_file() or path.suffix not in {".py", ".js"}:
-            continue
-        line_count = len(path.read_text(encoding="utf-8", errors="replace").splitlines())
-        if line_count > MAX_LINES_PER_FILE:
-            rel = path.relative_to(ROOT)
-            errors.append(
-                f"[SIZE] {rel}: {line_count} lines (limit {MAX_LINES_PER_FILE})"
-            )
-    return errors
 
 
 def check_domain_purity() -> list[str]:
@@ -65,13 +48,13 @@ def check_domain_purity() -> list[str]:
 
 
 def main() -> int:
-    errors = check_file_sizes() + check_domain_purity()
+    errors = check_domain_purity()
     if errors:
         print("GUARDRAILS FAILED:")
         for err in errors:
             print(f"  - {err}")
         return 1
-    print("GUARDRAILS OK (file sizes <= 400 lines, domain layer pure)")
+    print("GUARDRAILS OK (domain layer pure)")
     return 0
 
 
