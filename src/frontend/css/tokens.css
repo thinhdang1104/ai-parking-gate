@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Quản Lý Bãi Xe — Design Tokens & Base Reset
+   ========================================================================== */
+
+:root {
+  --ground: #060709;
+  --surface: #0f1217;
+  --raised: #161a22;
+  --elevated: #22262e;
+  --border: #242a36;
+  --border-strong: #384152;
+  --rule: #1a1f28;
+  --control: #313949;
+
+  --text: #f5f7fa;
+  --muted: #a3abb6;
+  --faint: #7d8694;
+
+  --accent: #f3c14b;
+  --accent-dim: #2b2212;
+  --positive: #38c976;
+  --negative: #e55353;
+  --warning: #e5a93b;
+  --info: #4da3ff;
+
+  --pill-pos-bg: #132a1e;
+  --pill-pos-fg: #4ce08d;
+  --pill-neg-bg: #2c1619;
+  --pill-neg-fg: #f27474;
+  --pill-warn-bg: #2b2212;
+  --pill-warn-fg: #f0be42;
+  --pill-neu-bg: #1e2228;
+  --pill-neu-fg: #c5ccd6;
+
+  --r-card: 12px;
+  --r-ctl: 8px;
+
+  --font: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --s-section: 16px;
+  --s-kpi: 28px;
+  --s-body: 14px;
+  --s-small: 12px;
+
+  --gap: 18px;
+  --pad: 20px;
+  --row-h: 48px;
+  --ctl-h: 34px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--s-body);
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.num,
+td.n,
+th.n,
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.mono-num,
+.plate-cell-main {
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}

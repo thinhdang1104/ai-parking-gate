@@ -2,8 +2,8 @@
 
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
-**Giai đoạn hiện tại:** Hoàn tất Phase 4 (`T4.1`–`T4.3` — Tầng HTTP FastAPI, DI Entrypoint & API/E2E Tests)  
-**Trạng thái tổng thể:** `27 / 36` tasks trong kế hoạch (`27` đã xong ở Phases 0–4, còn Phases 5–6: `9` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`62 passed in 0.91s`). Sẵn sàng chuyển sang **Phase 5 (T5.1–T5.5: Frontend HTML/CSS/ES Modules)**.
+**Giai đoạn hiện tại:** Hoàn tất Phase 5 (`T5.1`–`T5.5` — Frontend HTML, 4 CSS & 11 Vanilla ES Modules)  
+**Trạng thái tổng thể:** `32 / 36` tasks trong kế hoạch (`32` đã xong ở Phases 0–5, còn Phase 6: `4` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`JS SYNTAX OK (11 files)`, `63 passed in 0.99s`) kèm kiểm thử trình duyệt thực tế 3 màn hình không lỗi console. Sẵn sàng chuyển sang **Phase 6 (T6.1–T6.4: Training Scripts, Local MySQL & Nghiệm thu)**.
 
 ---
 
@@ -40,18 +40,21 @@
   - `src/backend/main.py`: `AppContainer`, `build_container`, `create_app`, `GZipMiddleware`, `request_observability_middleware` (`X-Request-ID`), lifecycle startup/shutdown an toàn và `uvicorn` runner.
   - `src/backend/storage/warm_mirror.py`: Bổ sung property `record_count` an toàn luồng cho health/metrics.
   - Bộ test API, contract drift & E2E (`tests/conftest.py` với `AsgiTestClient`, `tests/integration/test_api_routes.py`, `tests/e2e/test_full_parking_flow.py`, `tests/unit/test_schema_contract_drift.py`) đạt **`62 / 62` passed**.
+- **Phase 5 (`T5.1`–`T5.5`) đã hoàn tất & kiểm chứng (`VERIFY PASSED`, `JS SYNTAX OK (11 files)`, `63 passed in 0.99s`)**:
+  - `src/frontend/index.html` & `src/frontend/css/{tokens,layout,components,camera}.css`: Giữ nguyên 100% DOM IDs (`114`), classes (`229`), selectors CSS (`189`) và bố cục Dark Mode của bản gốc.
+  - `src/frontend/js/{api,state,utils,overlay,gate_ui,camera,history,revenue,lost_case_modal,pdf_export,main}.js`: Tách sạch `app.js` (3.383 dòng) thành 11 Vanilla ES Modules không vòng lặp import (`ImportErrors=0, HasCycle=False`).
+  - `tests/integration/test_api_routes.py`: Bổ sung `test_real_frontend_serves_html_css_and_es_modules` xác minh toàn bộ `/`, `/ui`, 4 CSS và 11 JS module trả về HTTP 200; kiểm thử trình duyệt trực tiếp trên `http://127.0.0.1:8000/` xác nhận 3 màn hình và toàn bộ asset/API hoạt động sạch, không lỗi console.
 - Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
 
 ---
 
 ## 2. Việc đang làm
-- Hoàn tất nghiệm thu **Phase 4** và chuẩn bị triển khai **Phase 5 (`T5.1`–`T5.5`)**: Tách giao diện Frontend thành HTML/CSS/Vanilla ES Modules.
+- Hoàn tất nghiệm thu **Phase 5** và chuẩn bị triển khai **Phase 6 (`T6.1`–`T6.4`)**: Training scripts, kiểm chứng Local MySQL & nghiệm thu cuối cùng.
 
 ---
 
 ## 3. Bước tiếp theo ngay sau khi được duyệt
-1. **[Phase 5 — T5.1 -> T5.5]** Viết lại Frontend theo ES Modules (`11 JS + 4 CSS`) và kiểm thử trực quan.
-2. **[Phase 6 — T6.1 -> T6.4]** Kiểm thử thực tế trên Local MySQL, model AI (`plate_best.pt`, `chars_best.pt`, FaceNet) và nghiệm thu toàn hệ thống.
+1. **[Phase 6 — T6.1 -> T6.4]** Sao chép/cập nhật `src/training/train_{plates,chars}.py`, kiểm chứng kết nối thực tế Local MySQL (MySQL Workbench), chạy toàn bộ test & đối chiếu nghiệm thu cuối cùng theo `spec.md`.
 
 ---
 

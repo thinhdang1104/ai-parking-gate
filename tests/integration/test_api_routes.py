@@ -361,3 +361,43 @@ def test_health_metrics_request_id_and_gzip(
         assert gz.status_code == 200
         assert gz.headers.get("content-encoding") == "gzip"
         assert len(gz.json()["records"]) == 15
+
+
+def test_real_frontend_serves_html_css_and_es_modules(
+    test_app_factory: Callable[..., Any],
+) -> None:
+    app = test_app_factory(settings=Settings(force_cpu=True))
+    css_paths = (
+        "/css/tokens.css",
+        "/css/layout.css",
+        "/css/components.css",
+        "/css/camera.css",
+    )
+    js_paths = (
+        "/js/main.js",
+        "/js/api.js",
+        "/js/state.js",
+        "/js/utils.js",
+        "/js/overlay.js",
+        "/js/gate_ui.js",
+        "/js/camera.js",
+        "/js/history.js",
+        "/js/revenue.js",
+        "/js/lost_case_modal.js",
+        "/js/pdf_export.js",
+    )
+
+    with AsgiTestClient(app) as client:
+        for page_path in ("/", "/ui"):
+            res = client.get(page_path)
+            assert res.status_code == 200
+            assert "no-cache" in res.headers["cache-control"]
+            assert '<script type="module" src="/js/main.js">' in res.text
+            for css_path in css_paths:
+                assert f'<link rel="stylesheet" href="{css_path}"' in res.text
+
+        for asset_path in (*css_paths, *js_paths):
+            asset_res = client.get(asset_path)
+            assert asset_res.status_code == 200, f"Failed asset: {asset_path}"
+            assert asset_res.text.strip(), f"Empty asset: {asset_path}"
+

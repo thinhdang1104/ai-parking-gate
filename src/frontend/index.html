@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Bãi Xe — Hệ Thống 2 Camera AI &amp; Lịch Sử</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/components.css" />
+  <link rel="stylesheet" href="/css/camera.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <nav class="top-nav" aria-label="Chuyển màn hình">
+          <button
+            id="nav-recognition"
+            type="button"
+            class="top-nav-btn"
+            data-target="view-recognition"
+            aria-current="page"
+          >
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+              <circle cx="12" cy="13" r="3" />
+            </svg>
+            <span>Camera nhận diện</span>
+          </button>
+          <button
+            id="nav-management"
+            type="button"
+            class="top-nav-btn"
+            data-target="view-management"
+          >
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>Lịch sử &amp; quản lý</span>
+          </button>
+          <button
+            id="nav-revenue"
+            type="button"
+            class="top-nav-btn"
+            data-target="view-revenue"
+          >
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            <span>Quản lý doanh thu</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="workspace">
+      <!-- ==================== SCREEN 1: FULL-WIDTH DUAL CAMERA ==================== -->
+      <section id="view-recognition" class="screen-view active" aria-label="Camera nhận diện">
+        <div id="camera-alert-box" class="notice-banner hidden" role="status"></div>
+
+        <!-- FULL-WIDTH DUAL CAMERA PANEL (CAM 1 + CAM 2) -->
+        <article class="panel camera-panel">
+          <header class="panel-header">
+            <div class="live-title-group">
+              <span id="stream-live-dot" class="status-dot" aria-hidden="true"></span>
+              <h2>Hệ thống 2 Camera Kiểm soát Cổng</h2>
+            </div>
+
+            <!-- TOP-UP POPUP AREA FOR LATCH, ENTRY/EXIT FEEDBACK & FACE MISMATCH ALERT -->
+            <div class="header-topup-slot">
+              <div id="latch-status-box" class="latch-banner hidden">
+                <div class="latch-info">
+                  <span id="latch-direction-badge" class="pill pos">LƯU HỜ · ĐI VÀO</span>
+                  <strong id="latch-plate-text" class="plate-cell-main mono-num num">-</strong>
+                  <span id="latch-step-text" class="latch-step">Chờ khuôn mặt ở Camera đối diện...</span>
+                </div>
+                <button id="btn-cancel-latch" class="btn btn-sm" type="button">Hủy</button>
+              </div>
+
+              <div id="gate-topup-box" class="topup-toast hidden" role="status" aria-live="polite"></div>
+
+              <section id="security-alert-box" class="topup-security-alert hidden" role="alert">
+                <div class="topup-alert-main">
+                  <span class="alert-icon-wrap" aria-hidden="true">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                      <path d="M12 9v4" />
+                      <path d="M12 17h.01" />
+                    </svg>
+                  </span>
+                  <div class="topup-alert-copy">
+                    <div class="topup-alert-headline">
+                      <strong class="alert-title">Cảnh báo lệch khuôn mặt khi lấy xe</strong>
+                      <span id="alert-score-pill" class="pill neg mono-num num">Lệch 0%</span>
+                    </div>
+                    <p id="alert-detail-text" class="alert-desc"></p>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button id="btn-approve-exit" class="btn btn-sm" type="button">Cho phép ra</button>
+                  <button id="btn-reject-exit" class="btn btn-sm danger" type="button">Từ chối</button>
+                </div>
+              </section>
+            </div>
+
+            <div class="camera-controls">
+              <button id="btn-scan-camera" class="btn" type="button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <span>Tìm camera</span>
+              </button>
+              <button id="btn-start-camera" class="btn primary" type="button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                <span>Bật cả 2</span>
+              </button>
+              <button id="btn-stop-camera" class="btn" type="button" disabled>
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="6" y="6" width="12" height="12" rx="1" />
+                </svg>
+                <span>Tắt tất cả</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="dual-camera-grid">
+            <!-- CAMERA 1 -->
+            <div class="cam-unit" id="cam1-unit-card">
+              <div class="cam-unit-header">
+                <div class="cam-unit-meta">
+                  <span class="cam-index-chip mono-num">CAM 01</span>
+                  <div class="cam-unit-title">
+                    <strong>Cam 1 · Luồng 01</strong>
+                  </div>
+                </div>
+                <div class="cam-unit-controls">
+                  <label class="device-field" for="cam1-device-select">
+                    <span>Thiết bị camera</span>
+                    <select id="cam1-device-select" class="input device-select" disabled>
+                      <option value="">-- Bấm "Tìm camera" --</option>
+                    </select>
+                  </label>
+                  <button id="btn-cam1-start" class="btn btn-sm primary" type="button" disabled>Kết nối</button>
+                  <button id="btn-cam1-stop" class="btn btn-sm" type="button" disabled>Tắt</button>
+                </div>
+              </div>
+              <div class="cam-unit-badges">
+                <span id="cam1-plate-value" class="pill warn mono-num num hidden">Biển: -</span>
+                <span id="cam1-face-value" class="pill pos mono-num num hidden">Mặt: -</span>
+                <span id="cam1-vote-pill" class="pill mono-num num">Chưa chọn thiết bị · Ngắt</span>
+              </div>
+
+              <div class="camera-stage">
+                <span class="hud-corner tl" aria-hidden="true"></span>
+                <span class="hud-corner tr" aria-hidden="true"></span>
+                <span class="hud-corner bl" aria-hidden="true"></span>
+                <span class="hud-corner br" aria-hidden="true"></span>
+
+                <video id="cam1-live-video" class="camera-stream hidden" playsinline muted autoplay></video>
+                <canvas id="cam1-overlay-canvas" class="camera-overlay-canvas hidden"></canvas>
+                <div id="cam1-placeholder" class="camera-standby">
+                  <svg class="standby-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                    <circle cx="12" cy="13" r="3" />
+                  </svg>
+                  <span class="standby-text">Chưa kết nối Cam 1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CAMERA 2 -->
+            <div class="cam-unit" id="cam2-unit-card">
+              <div class="cam-unit-header">
+                <div class="cam-unit-meta">
+                  <span class="cam-index-chip cam-chip-2 mono-num">CAM 02</span>
+                  <div class="cam-unit-title">
+                    <strong>Cam 2 · Luồng 02</strong>
+                  </div>
+                </div>
+                <div class="cam-unit-controls">
+                  <label class="device-field" for="cam2-device-select">
+                    <span>Thiết bị camera</span>
+                    <select id="cam2-device-select" class="input device-select" disabled>
+                      <option value="">-- Bấm "Tìm camera" --</option>
+                    </select>
+                  </label>
+                  <button id="btn-cam2-start" class="btn btn-sm primary" type="button" disabled>Kết nối</button>
+                  <button id="btn-cam2-stop" class="btn btn-sm" type="button" disabled>Tắt</button>
+                </div>
+              </div>
+              <div class="cam-unit-badges">
+                <span id="cam2-plate-value" class="pill warn mono-num num hidden">Biển: -</span>
+                <span id="cam2-face-value" class="pill pos mono-num num hidden">Mặt: -</span>
+                <span id="cam2-vote-pill" class="pill mono-num num">Chưa chọn thiết bị · Ngắt</span>
+              </div>
+
+              <div class="camera-stage">
+                <span class="hud-corner tl" aria-hidden="true"></span>
+                <span class="hud-corner tr" aria-hidden="true"></span>
+                <span class="hud-corner bl" aria-hidden="true"></span>
+                <span class="hud-corner br" aria-hidden="true"></span>
+
+                <video id="cam2-live-video" class="camera-stream hidden" playsinline muted autoplay></video>
+                <canvas id="cam2-overlay-canvas" class="camera-overlay-canvas hidden"></canvas>
+                <div id="cam2-placeholder" class="camera-standby">
+                  <svg class="standby-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                    <circle cx="12" cy="13" r="3" />
+                  </svg>
+                  <span class="standby-text">Chưa kết nối Cam 2</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="vote-ambiguous-warning" class="notice-banner notice-warn hidden">
+            Nhiều biển số trong cùng một khung hình — hệ thống tạm bỏ qua mẫu đó.
+          </div>
+        </article>
+      </section>
+
+      <!-- ==================== SCREEN 2: MANAGEMENT & LEDGER ==================== -->
+      <section id="view-management" class="screen-view" aria-label="Lịch sử và quản lý">
+        <div id="management-alert-box" class="notice-banner hidden" role="status"></div>
+
+        <!-- COMPACT STATS STRIP -->
+        <div class="kpis" aria-label="Thống kê dữ liệu">
+          <div class="kpi accent-gold">
+            <div class="kpi-top">
+              <div class="kpi-label">Đang gửi trong bãi</div>
+              <span class="kpi-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3" />
+                  <path d="M9 17V7h4a3 3 0 0 1 0 6H9" />
+                </svg>
+              </span>
+            </div>
+            <div class="kpi-value mono-num num" id="stat-in-parking">0</div>
+          </div>
+
+          <div class="kpi accent-green">
+            <div class="kpi-top">
+              <div class="kpi-label">Lượt vào / ra hôm nay</div>
+              <span class="kpi-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M8 3 4 7l4 4" />
+                  <path d="M4 7h16" />
+                  <path d="m16 21 4-4-4-4" />
+                  <path d="M20 17H4" />
+                </svg>
+              </span>
+            </div>
+            <div class="kpi-value mono-num num" id="stat-today-records">0</div>
+          </div>
+
+          <div class="kpi accent-blue">
+            <div class="kpi-top">
+              <div class="kpi-label">Tổng lượt lưu trữ</div>
+              <span class="kpi-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <ellipse cx="12" cy="5" rx="9" ry="3" />
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+                  <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+                </svg>
+              </span>
+            </div>
+            <div class="kpi-value mono-num num" id="stat-total-records">0</div>
+          </div>
+        </div>
+
+        <!-- RECOGNITION LEDGER -->
+        <div class="panel ledger-panel">
+          <div class="ledger-toolbar">
+            <div class="tabs" role="tablist" aria-label="Lọc theo trạng thái">
+              <button type="button" class="tab-link" role="tab" data-status-filter="all" aria-selected="true">
+                Tất cả (<span id="tab-count-all" class="mono-num num">0</span>)
+              </button>
+              <button type="button" class="tab-link" role="tab" data-status-filter="in_parking" aria-selected="false">
+                Đang gửi trong bãi (<span id="tab-count-parking" class="mono-num num">0</span>)
+              </button>
+              <button type="button" class="tab-link" role="tab" data-status-filter="direction_in" aria-selected="false">
+                Lượt vào (<span id="tab-count-in" class="mono-num num">0</span>)
+              </button>
+              <button type="button" class="tab-link" role="tab" data-status-filter="direction_out" aria-selected="false">
+                Lượt ra (<span id="tab-count-out" class="mono-num num">0</span>)
+              </button>
+            </div>
+
+            <div class="filters">
+              <label for="search-plate-input" class="sr-only">Tìm biển số xe</label>
+              <input
+                id="search-plate-input"
+                type="search"
+                class="input search-input"
+                placeholder="Tìm biển số xe..."
+              />
+              <span id="ledger-count-text" class="stamp mono-num num">0 / 0</span>
+              <button id="btn-export-history-pdf" class="btn" type="button" title="Xuất báo cáo Lịch sử & Quản lý ra file PDF">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="12" y1="18" x2="12" y2="12" />
+                  <polyline points="9 15 12 18 15 15" />
+                </svg>
+                <span>Xuất PDF</span>
+              </button>
+              <button id="btn-refresh-management" class="btn" type="button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                  <path d="M3 3v5h5" />
+                  <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                  <path d="M16 16h5v5" />
+                </svg>
+                <span>Làm mới</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-label="Sổ nhật ký nhận diện">
+              <thead>
+                <tr>
+                  <th>Biển số xe</th>
+                  <th>Ảnh cắt (Biển &amp; Mặt)</th>
+                  <th id="th-direction-sort">Luồng <span id="direction-sort-indicator" class="sort-indicator"></span></th>
+                  <th class="n">Thời gian</th>
+                  <th class="n">Mã ghi</th>
+                  <th class="n">Xử lý mất xe</th>
+                </tr>
+              </thead>
+              <tbody id="history-table-body"></tbody>
+            </table>
+          </div>
+
+          <div id="ledger-pagination" class="pagination-bar" aria-label="Phân trang danh sách bản ghi">
+            <div class="pagination-meta">
+              <span id="pagination-range-text" class="stamp mono-num num">Hiển thị 0–0</span>
+              <label for="page-size-select" class="pagination-size-label">
+                <span>Số dòng:</span>
+                <select id="page-size-select" class="input page-size-select mono-num num">
+                  <option value="10" selected>10 / trang</option>
+                  <option value="20">20 / trang</option>
+                  <option value="50">50 / trang</option>
+                  <option value="100">100 / trang</option>
+                </select>
+              </label>
+            </div>
+            <div id="pagination-controls" class="pagination-controls"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 3: QUẢN LÝ DOANH THU ==================== -->
+      <section id="view-revenue" class="screen-view" aria-label="Quản lý doanh thu giữ xe">
+        <div class="panel revenue-panel">
+          <header class="panel-header">
+            <div class="live-title-group">
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </span>
+              <h2>Quản lý doanh thu giữ xe</h2>
+              <span id="revenue-unit-pill" class="pill warn mono-num num">Đơn giá: 2.000 đ / lượt gửi</span>
+            </div>
+
+            <div class="revenue-header-actions">
+              <button id="btn-export-revenue-pdf" class="btn" type="button" title="Xuất báo cáo Doanh thu ra file PDF">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="12" y1="18" x2="12" y2="12" />
+                  <polyline points="9 15 12 18 15 15" />
+                </svg>
+                <span>Xuất PDF</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="revenue-summary-grid">
+            <button
+              type="button"
+              class="revenue-card rev-period-btn highlight-card"
+              data-rev-period="daily"
+              aria-pressed="true"
+              title="Bấm để xem bảng doanh thu theo ngày"
+            >
+              <span class="kpi-label">Doanh thu hôm nay</span>
+              <strong id="rev-today-amount" class="revenue-amount mono-num num">0 đ</strong>
+              <span id="rev-today-tickets" class="stamp mono-num num">0 lượt gửi xe</span>
+            </button>
+
+            <button
+              type="button"
+              class="revenue-card rev-period-btn"
+              data-rev-period="monthly"
+              aria-pressed="false"
+              title="Bấm để xem bảng doanh thu theo tháng"
+            >
+              <span class="kpi-label">Doanh thu tháng này</span>
+              <strong id="rev-month-amount" class="revenue-amount mono-num num">0 đ</strong>
+              <span id="rev-month-tickets" class="stamp mono-num num">0 lượt gửi xe</span>
+            </button>
+
+            <button
+              type="button"
+              class="revenue-card rev-period-btn"
+              data-rev-period="yearly"
+              aria-pressed="false"
+              title="Bấm để xem bảng doanh thu theo năm"
+            >
+              <span class="kpi-label">Doanh thu năm nay</span>
+              <strong id="rev-year-amount" class="revenue-amount mono-num num">0 đ</strong>
+              <span id="rev-year-tickets" class="stamp mono-num num">0 lượt gửi xe</span>
+            </button>
+
+            <div class="revenue-card">
+              <span class="kpi-label">Tổng doanh thu tích lũy</span>
+              <strong id="rev-total-amount" class="revenue-amount mono-num num">0 đ</strong>
+              <span id="rev-total-tickets" class="stamp mono-num num">0 lượt gửi xe</span>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table aria-label="Bảng thống kê doanh thu chi tiết">
+              <thead>
+                <tr>
+                  <th id="revenue-period-col-title">Ngày (DD/MM/YYYY)</th>
+                  <th class="n">Số lượt gửi xe</th>
+                  <th class="n">Đơn giá / lượt</th>
+                  <th class="n">Tổng doanh thu</th>
+                </tr>
+              </thead>
+              <tbody id="revenue-table-body">
+                <tr>
+                  <td colspan="4">Đang tải dữ liệu doanh thu...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="revenue-pagination" class="pagination-bar" aria-label="Phân trang bảng doanh thu">
+            <div class="pagination-meta">
+              <span id="rev-pagination-range-text" class="stamp mono-num num">Hiển thị 0–0</span>
+              <label for="rev-page-size-select" class="pagination-size-label">
+                <span>Số dòng:</span>
+                <select id="rev-page-size-select" class="input page-size-select mono-num num">
+                  <option value="10" selected>10 / trang</option>
+                  <option value="20">20 / trang</option>
+                  <option value="50">50 / trang</option>
+                </select>
+              </label>
+            </div>
+            <div id="rev-pagination-controls" class="pagination-controls"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL XEM ẢNH CẮT & HỒ SƠ TRA CỨU MẤT XE (CHECK IN, CHECK OUT, NGƯỜI LẤY XE) -->
+    <div id="snapshot-modal" class="snapshot-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="snapshot-modal-title">
+      <div id="snapshot-modal-card" class="snapshot-modal-card lost-case-modal-card">
+        <header class="snapshot-modal-header">
+          <div>
+            <h3 id="snapshot-modal-title" class="snapshot-modal-title mono-num">Biển số -</h3>
+          </div>
+          <div class="snapshot-modal-actions">
+            <button id="btn-export-lost-case-pdf" type="button" class="btn primary">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <polyline points="9 15 12 18 15 15" />
+              </svg>
+              <span>Xuất PDF biên bản</span>
+            </button>
+            <button id="btn-close-snapshot-modal" type="button" class="btn snapshot-close-btn" aria-label="Đóng">✕ Đóng</button>
+          </div>
+        </header>
+
+        <!-- TÓM TẮT KẾT LUẬN ĐỐI CHIẾU -->
+        <div id="lost-case-verdict-banner" class="lost-case-verdict"></div>
+
+        <!-- 3 KHỐI THÔNG TIN: 1. CHECK IN | 2. CHECK OUT | 3. NGƯỜI LẤY XE -->
+        <div class="lost-case-grid">
+          <!-- KHỐI 1: CHECK IN (hoặc xem ảnh cắt đơn của 1 lượt VÀO / RA) -->
+          <section class="lost-case-col" id="modal-col-primary">
+            <div class="lost-case-col-header">
+              <span id="checkin-badge-pill" class="pill pos">1. CHECK IN (LÚC GỬI XE)</span>
+              <span id="checkin-record-id" class="stamp mono-num num">#-</span>
+            </div>
+            <div class="lost-case-meta-list">
+              <div class="lost-case-meta-row">
+                <span id="checkin-time-label">Thời gian vào:</span>
+                <strong id="checkin-time" class="mono-num num">-</strong>
+              </div>
+              <div class="lost-case-meta-row">
+                <span id="checkin-plate-label">Biển số lúc vào:</span>
+                <strong id="checkin-plate" class="plate-cell-main mono-num num">-</strong>
+              </div>
+              <div class="lost-case-meta-row">
+                <span id="checkin-face-label">Nhận diện mặt:</span>
+                <strong id="checkin-face-status">-</strong>
+              </div>
+            </div>
+            <div class="lost-case-photos-pair">
+              <div class="snapshot-box">
+                <span id="checkin-plate-img-label" class="snapshot-box-label">Biển số Check-in</span>
+                <div class="snapshot-img-frame small-frame">
+                  <img id="modal-plate-img" src="" alt="Ảnh biển số" />
+                  <span id="checkin-plate-empty" class="snapshot-empty-hint hidden">Không có ảnh lưu trữ</span>
+                </div>
+              </div>
+              <div class="snapshot-box">
+                <span id="checkin-face-img-label" class="snapshot-box-label">Người gửi xe (Check-in)</span>
+                <div class="snapshot-img-frame small-frame">
+                  <img id="modal-face-img" src="" alt="Ảnh khuôn mặt" />
+                  <span id="checkin-face-empty" class="snapshot-empty-hint hidden">Không có ảnh lưu trữ</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- KHỐI 2: CHECK OUT (LÚC LẤY XE) -->
+          <section class="lost-case-col" id="modal-col-checkout">
+            <div class="lost-case-col-header">
+              <span id="checkout-badge-pill" class="pill warn">2. CHECK OUT (LÚC LẤY XE)</span>
+              <span id="checkout-record-id" class="stamp mono-num num">#-</span>
+            </div>
+            <div class="lost-case-meta-list">
+              <div class="lost-case-meta-row">
+                <span>Thời gian ra:</span>
+                <strong id="checkout-time" class="mono-num num">-</strong>
+              </div>
+              <div class="lost-case-meta-row">
+                <span>Trạng thái bãi:</span>
+                <strong id="checkout-parking-status">-</strong>
+              </div>
+              <div class="lost-case-meta-row">
+                <span>Đối chiếu FaceNet:</span>
+                <strong id="checkout-match-status">-</strong>
+              </div>
+            </div>
+            <div class="snapshot-box">
+              <span class="snapshot-box-label">Ảnh biển số lúc Check-out</span>
+              <div id="checkout-plate-frame" class="snapshot-img-frame small-frame">
+                <img id="modal-checkout-plate-img" src="" alt="Ảnh biển số lúc ra" />
+                <span id="checkout-plate-empty" class="snapshot-empty-hint hidden">Chưa có lượt Check-out qua cổng</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- KHỐI 3: NGƯỜI LẤY XE (TRÍCH XUẤT BẰNG CHỨNG) -->
+          <section class="lost-case-col highlight-taker-col" id="modal-col-taker">
+            <div class="lost-case-col-header">
+              <span class="pill neg">3. NGƯỜI LẤY XE</span>
+              <span id="taker-match-pill" class="pill mono-num num">-</span>
+            </div>
+            <div class="snapshot-box taker-photo-box">
+              <span class="snapshot-box-label">Ảnh khuôn mặt Người lấy xe (Camera cổng ra)</span>
+              <div id="taker-face-frame" class="snapshot-img-frame taker-frame">
+                <img id="modal-taker-face-img" src="" alt="Ảnh khuôn mặt người lấy xe" />
+                <span id="taker-face-empty" class="snapshot-empty-hint hidden">Xe chưa ghi nhận lượt lấy ra qua cổng</span>
+              </div>
+            </div>
+            <p id="taker-note-text" class="lost-case-note"></p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

@@ -42,11 +42,11 @@
 - [x] **T4.3** Viết API tests & E2E flow tests (`tests/integration/test_api_routes.py`, `tests/e2e/test_full_parking_flow.py`) — *Deps: T4.2* · *Verify: `pytest tests/` pass 100%*
 
 ## Phase 5: Viết lại Frontend theo Mô-đun (ES Modules & CSS)
-- [ ] **T5.1** Tạo `src/frontend/index.html` và tách CSS thành 4 file (`tokens.css`, `layout.css`, `components.css`, `camera.css`) — *Deps: T4.2*
-- [ ] **T5.2** Viết nền tảng JS (`js/api.js`, `js/state.js`, `js/utils.js`) — *Deps: T5.1*
-- [ ] **T5.3** Viết cụm Camera & Gate UI (`js/camera.js`, `js/overlay.js`, `js/gate_ui.js`) — *Deps: T5.2*
-- [ ] **T5.4** Viết cụm Quản lý, Doanh thu, Mất xe & Xuất PDF (`js/history.js`, `js/revenue.js`, `js/lost_case_modal.js`, `js/pdf_export.js`, `js/main.js`) — *Deps: T5.2*
-- [ ] **T5.5** Kiểm tra cú pháp JS & kiểm thử trực quan toàn bộ 3 màn hình + Modal + PDF trên trình duyệt — *Deps: T5.3, T5.4*
+- [x] **T5.1** Tạo `src/frontend/index.html` và tách CSS thành 4 file (`tokens.css`, `layout.css`, `components.css`, `camera.css`) — *Deps: T4.2*
+- [x] **T5.2** Viết nền tảng JS (`js/api.js`, `js/state.js`, `js/utils.js`) — *Deps: T5.1*
+- [x] **T5.3** Viết cụm Camera & Gate UI (`js/camera.js`, `js/overlay.js`, `js/gate_ui.js`) — *Deps: T5.2*
+- [x] **T5.4** Viết cụm Quản lý, Doanh thu, Mất xe & Xuất PDF (`js/history.js`, `js/revenue.js`, `js/lost_case_modal.js`, `js/pdf_export.js`, `js/main.js`) — *Deps: T5.2*
+- [x] **T5.5** Kiểm tra cú pháp JS & kiểm thử trực quan toàn bộ 3 màn hình + Modal + PDF trên trình duyệt — *Deps: T5.3, T5.4*
 
 ## Phase 6: Training Scripts, Kiểm chứng Local MySQL & Nghiệm thu
 - [ ] **T6.1** Sao chép/cập nhật `src/training/train_plates.py`, `src/training/train_chars.py` — *Deps: T0.4*
