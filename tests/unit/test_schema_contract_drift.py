@@ -148,3 +148,48 @@ def test_openapi_paths_cover_documented_endpoints() -> None:
     actual_paths = _extract_openapi_paths(yaml_text)
     missing = documented - actual_paths
     assert not missing, f"schemas/openapi.yaml missing documented paths: {sorted(missing)}"
+
+
+def _collect_route_methods(routes: list[object]) -> dict[str, set[str]]:
+    from fastapi.routing import APIRoute
+
+    route_methods: dict[str, set[str]] = {}
+    for route in routes:
+        if isinstance(route, APIRoute):
+            route_methods.setdefault(route.path, set()).update(route.methods or set())
+        else:
+            orig_router = getattr(route, "original_router", None)
+            if orig_router is not None:
+                for path, methods in _collect_route_methods(list(orig_router.routes)).items():
+                    route_methods.setdefault(path, set()).update(methods)
+    return route_methods
+
+
+def test_fastapi_app_registers_all_openapi_routes() -> None:
+    from src.backend.main import create_app
+
+    app = create_app(enable_lifespan_startup=False)
+    try:
+        route_methods = _collect_route_methods(list(app.routes))
+
+        expected_paths = set(DOCUMENTED_OPENAPI_PATHS)
+        actual_paths = set(route_methods.keys())
+        missing = expected_paths - actual_paths
+        assert not missing, f"FastAPI app missing OpenAPI paths: {sorted(missing)}"
+
+        assert {"GET", "HEAD"}.issubset(route_methods["/"])
+        assert {"GET", "HEAD"}.issubset(route_methods["/ui"])
+        assert "GET" in route_methods["/api/camera/status"]
+        assert "POST" in route_methods["/api/camera/{cam_id}/start"]
+        assert "POST" in route_methods["/api/camera/{cam_id}/stop"]
+        assert "POST" in route_methods["/api/camera/stop"]
+        assert "POST" in route_methods["/api/camera/browser-frame"]
+        assert "POST" in route_methods["/api/camera/cancel-latch"]
+        assert "POST" in route_methods["/api/camera/resolve-alert"]
+        assert "GET" in route_methods["/api/management/overview"]
+        assert "GET" in route_methods["/api/management/session-case/{record_id}"]
+        assert "POST" in route_methods["/api/management/reconnect"]
+        assert "GET" in route_methods["/api/health"]
+        assert "GET" in route_methods["/api/metrics"]
+    finally:
+        app.state.container.gate_service.shutdown(timeout=1.0)

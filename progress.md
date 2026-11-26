@@ -2,8 +2,8 @@
 
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
-**Giai đoạn hiện tại:** Hoàn tất Phase 3 (`T3.1`–`T3.7` — AI Adapters & Services Điều phối)  
-**Trạng thái tổng thể:** `24 / 36` tasks trong kế hoạch (`24` đã xong ở Phases 0–3, còn Phases 4–6: `12` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`55 passed in 7.07s`). Đang tiến hành **Phase 4 (T4.1–T4.3: Tầng HTTP FastAPI & API/E2E Tests)**.
+**Giai đoạn hiện tại:** Hoàn tất Phase 4 (`T4.1`–`T4.3` — Tầng HTTP FastAPI, DI Entrypoint & API/E2E Tests)  
+**Trạng thái tổng thể:** `27 / 36` tasks trong kế hoạch (`27` đã xong ở Phases 0–4, còn Phases 5–6: `9` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`62 passed in 0.91s`). Sẵn sàng chuyển sang **Phase 5 (T5.1–T5.5: Frontend HTML/CSS/ES Modules)**.
 
 ---
 
@@ -35,18 +35,23 @@
   - `src/backend/ai/{plate_detector,face_service}.py` (YOLOv8 batch 2 ảnh + FaceNet 512-D với graceful degradation).
   - `src/backend/services/{camera_session,latch_coordinator,management_service,gate_pipeline,gate_service}.py` (Latch 4s, pre-latch 1.8s, Security Alert approve/reject, async DB commit an toàn khi tắt cam/server).
   - Bộ test tích hợp & regression (`test_management_service.py`, `test_gate_service.py`) nâng tổng số test pass lên `55 / 55`.
+- **Phase 4 (`T4.1`–`T4.3`) đã hoàn tất & kiểm chứng (`VERIFY PASSED`, `62 passed in 0.91s`)**:
+  - `src/backend/api/{schemas,camera_routes,management_routes,static_routes,__init__}.py`: Đầy đủ 14 routes khớp `schemas/openapi.yaml` (WebRTC offer/shutdown/snapshot cho `in`/`out`, history, lost cases, management overview, PDF export, `/api/health`, `/api/metrics`, static SPA fallback).
+  - `src/backend/main.py`: `AppContainer`, `build_container`, `create_app`, `GZipMiddleware`, `request_observability_middleware` (`X-Request-ID`), lifecycle startup/shutdown an toàn và `uvicorn` runner.
+  - `src/backend/storage/warm_mirror.py`: Bổ sung property `record_count` an toàn luồng cho health/metrics.
+  - Bộ test API, contract drift & E2E (`tests/conftest.py` với `AsgiTestClient`, `tests/integration/test_api_routes.py`, `tests/e2e/test_full_parking_flow.py`, `tests/unit/test_schema_contract_drift.py`) đạt **`62 / 62` passed**.
 - Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
 
 ---
 
 ## 2. Việc đang làm
-- Triển khai **Phase 4 (`T4.1`–`T4.3`)**: Tầng HTTP FastAPI (`schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py`), DI entrypoint `src/backend/main.py` kèm `/api/health`, `/api/metrics`, `X-Request-ID` & bộ API/E2E tests.
+- Hoàn tất nghiệm thu **Phase 4** và chuẩn bị triển khai **Phase 5 (`T5.1`–`T5.5`)**: Tách giao diện Frontend thành HTML/CSS/Vanilla ES Modules.
 
 ---
 
 ## 3. Bước tiếp theo ngay sau khi được duyệt
-1. **[Phase 4 — T4.1 -> T4.3]** Hoàn tất FastAPI routes, DI container & E2E tests (`test_api_routes.py`, `test_full_parking_flow.py`).
-2. **[Phase 5 — T5.1 -> T5.5]** Viết lại Frontend theo ES Modules (`11 JS + 4 CSS`) và kiểm thử trực quan.
+1. **[Phase 5 — T5.1 -> T5.5]** Viết lại Frontend theo ES Modules (`11 JS + 4 CSS`) và kiểm thử trực quan.
+2. **[Phase 6 — T6.1 -> T6.4]** Kiểm thử thực tế trên Local MySQL, model AI (`plate_best.pt`, `chars_best.pt`, FaceNet) và nghiệm thu toàn hệ thống.
 
 ---
 

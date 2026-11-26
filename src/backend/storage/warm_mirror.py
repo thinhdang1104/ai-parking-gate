@@ -53,6 +53,12 @@ class WarmDatabaseMirror:
         self._by_id: dict[int, dict[str, Any]] = {}
         self._active_sessions: dict[str, dict[str, Any]] = {}
 
+    @property
+    def record_count(self) -> int:
+        """Return total number of records currently held in the warm RAM mirror."""
+        with self._lock:
+            return len(self._items)
+
     def _build_item(self, row: dict[str, Any], images_loaded: bool) -> dict[str, Any]:
         item = normalize_raw_record(
             row, images_loaded=images_loaded, now_fn=self._now_fn

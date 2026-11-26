@@ -37,9 +37,9 @@
 - [x] **T3.7** Viết regression & integration tests (`tests/integration/test_gate_service.py`, `tests/integration/test_management_service.py`) — *Deps: T3.6* · *Verify: pass toàn bộ regression scenarios*
 
 ## Phase 4: Tầng HTTP FastAPI & API Tests
-- [ ] **T4.1** Viết `src/backend/api/schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py` — *Deps: T3.5, T3.6*
-- [ ] **T4.2** Viết `src/backend/main.py` (DI wiring, `lifespan`, `GZipMiddleware`, `uvicorn` runner) — *Deps: T4.1*
-- [ ] **T4.3** Viết API tests & E2E flow tests (`tests/integration/test_api_routes.py`, `tests/e2e/test_full_parking_flow.py`) — *Deps: T4.2* · *Verify: `pytest tests/` pass 100%*
+- [x] **T4.1** Viết `src/backend/api/schemas.py`, `camera_routes.py`, `management_routes.py`, `static_routes.py` — *Deps: T3.5, T3.6*
+- [x] **T4.2** Viết `src/backend/main.py` (DI wiring, `lifespan`, `GZipMiddleware`, `uvicorn` runner) — *Deps: T4.1*
+- [x] **T4.3** Viết API tests & E2E flow tests (`tests/integration/test_api_routes.py`, `tests/e2e/test_full_parking_flow.py`) — *Deps: T4.2* · *Verify: `pytest tests/` pass 100%*
 
 ## Phase 5: Viết lại Frontend theo Mô-đun (ES Modules & CSS)
 - [ ] **T5.1** Tạo `src/frontend/index.html` và tách CSS thành 4 file (`tokens.css`, `layout.css`, `components.css`, `camera.css`) — *Deps: T4.2*
