@@ -62,7 +62,7 @@ class ParkingRepository:
                 connection.commit()
             if warm_mirror is not None:
                 warm_mirror.load_from_cursor(cursor)
-        except self.client._error_types() as error:
+        except self.client.error_types() as error:
             raise DatabaseOperationError(str(error)) from error
         finally:
             try:
@@ -117,7 +117,7 @@ class ParkingRepository:
         if cursor is not None:
             try:
                 return _query(cursor)
-            except self.client._error_types() as error:
+            except self.client.error_types() as error:
                 raise DatabaseOperationError(str(error)) from error
         return self.client.run_read_query(_query)
 
@@ -207,7 +207,7 @@ class ParkingRepository:
             return int(cursor.lastrowid), (
                 float(match_score) if match_score is not None else None
             )
-        except self.client._error_types() as error:
+        except self.client.error_types() as error:
             try:
                 connection.rollback()
             except Exception:
@@ -250,7 +250,7 @@ class ParkingRepository:
         threshold = float(self.settings.face_match_threshold)
 
         def _query(cursor: Any) -> dict[str, Any]:
-            today_start = self._now_fn().replace(hour=0, minute=0, second=0)
+            today_start = self._now_fn().replace(hour=0, minute=0, second=0, microsecond=0)
             stats_payload = (
                 fetch_stats_sql(cursor, today_start) if include_stats else None
             )

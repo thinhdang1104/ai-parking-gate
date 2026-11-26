@@ -246,7 +246,7 @@ class WarmDatabaseMirror:
             items = list(self._items)
 
         vn_now = self._now_fn()
-        today_start = vn_now.replace(hour=0, minute=0, second=0)
+        today_start = vn_now.replace(hour=0, minute=0, second=0, microsecond=0)
         stats_payload = (
             compute_mirror_stats(items, today_start) if include_stats else None
         )

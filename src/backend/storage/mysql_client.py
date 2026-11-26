@@ -45,7 +45,7 @@ class MySQLClient:
 
         return mysql.connector
 
-    def _error_types(self) -> tuple[type[BaseException], ...]:
+    def error_types(self) -> tuple[type[BaseException], ...]:
         types: list[type[BaseException]] = []
         if isinstance(_DefaultMySQLError, type) and issubclass(
             _DefaultMySQLError, BaseException
@@ -106,7 +106,7 @@ class MySQLClient:
         connector = self._get_connector()
         try:
             return connector.connect(**config)
-        except self._error_types() as error:
+        except self.error_types() as error:
             raise DatabaseOperationError(str(error)) from error
 
     def run_read_query(self, fn: Callable[[Any], _T]) -> _T:
@@ -115,7 +115,7 @@ class MySQLClient:
         cursor = connection.cursor(dictionary=True)
         try:
             return fn(cursor)
-        except self._error_types() as error:
+        except self.error_types() as error:
             raise DatabaseOperationError(str(error)) from error
         finally:
             try:

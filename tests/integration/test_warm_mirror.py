@@ -290,3 +290,22 @@ def test_warm_mirror_thread_safety_under_concurrent_writes_and_reads() -> None:
     assert errors == []
     final = mirror.query_overview()
     assert final is not None and final["matched"] == 30
+
+
+def test_warm_mirror_midnight_record_counted_when_now_has_microseconds() -> None:
+    now_with_micros = datetime(2026, 11, 26, 12, 0, 0, 500000)
+    midnight = datetime(2026, 11, 26, 0, 0, 0)
+    mirror = WarmDatabaseMirror(now_fn=lambda: now_with_micros)
+
+    fake_cursor = mock.MagicMock()
+    fake_cursor.fetchall.side_effect = [
+        [_cursor_row(1, "59V1-79379", "IN", "IN_PARKING", midnight)],
+        [{"id": 1, "plate_image": "P", "face_image": "F"}],
+        [],
+    ]
+    mirror.load_from_cursor(fake_cursor)
+
+    overview = mirror.query_overview(include_stats=True, include_revenue=True)
+    assert overview is not None
+    assert overview["stats"]["today_records"] == 1
+    assert overview["revenue"]["today"] == {"tickets": 1, "revenue": 2000}

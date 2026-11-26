@@ -39,7 +39,7 @@ def fetch_revenue_report_sql(
     unit_price: int,
 ) -> dict[str, Any]:
     """Compute revenue totals and daily/monthly/yearly breakdowns (IN tickets only)."""
-    today_start = vn_now.replace(hour=0, minute=0, second=0)
+    today_start = vn_now.replace(hour=0, minute=0, second=0, microsecond=0)
     month_start = today_start.replace(day=1)
     year_start = today_start.replace(month=1, day=1)
 
