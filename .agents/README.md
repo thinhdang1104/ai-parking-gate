@@ -4,6 +4,8 @@ This directory holds the project-scoped **Agent Harness** and **MCP Server** con
 
 ## Structure
 - `skills/datn2-workflow/SKILL.md` — Project development loop, guardrails, and 4-phase verification discipline.
+- `skills/datn2-contract-guard/SKILL.md` — Zero-drift enforcement across `schemas/*`, MySQL migrations, presenters, and FastAPI routes.
+- `skills/datn2-cv-eval/SKILL.md` — Deterministic YOLOv8 & FaceNet smoke-evaluation discipline.
 - `memory/decisions.md` — Persistent ADR log across sessions.
 - `memory/gotchas.md` — Critical invariants and edge cases from legacy `DATN`.
 - `mcp_config.json` — Project MCP server definitions using environment variables only (zero hardcoded secrets).

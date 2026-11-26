@@ -123,6 +123,28 @@
 
 ---
 
+### 2.1 Bảng Chuyển Trạng Thái — Two-Phase Latch, Async Commit & Security Alert
+
+Mọi triển khai tại `LatchCoordinator` và `GateService` (Phase 3) phải tuân thủ chính xác bảng chuyển trạng thái dưới đây:
+
+| Trạng thái hiện tại | Sự kiện (Event) | Điều kiện (Guard) | Trạng thái mới | Hành động & Bất biến |
+| :--- | :--- | :--- | :--- | :--- |
+| `IDLE` | Frame có biển số hợp lệ | Không có `security_alert`, `plate_key` không bị cooldown/must-leave/committing | `VOTING` | Ghi nhận mẫu phiếu (giãn cách `>= 0.08s`, cửa sổ `3.0s`), lưu crop biển sắc nét nhất |
+| `VOTING` | Mất biển số quá `1.5s` | Không thấy `plate_key` trên cam | `IDLE` | Reset `observations`, `plate_crops`, gỡ cờ `plates_must_leave` cho biển đã rời khung hình |
+| `VOTING` | Đạt đồng thuận (`>= 3` mẫu & `>= 70%`, hoặc Fast-Confirm `>= 2` liên tiếp & char conf `>= 0.75`) | MySQL chưa sẵn sàng (`not database_ready`) | `IDLE` | Hủy bỏ phiếu, phát feedback lỗi `"LỖI KẾT NỐI CSDL — TẠM HOÃN XÁC THỰC XE ..."` |
+| `VOTING` | Đạt đồng thuận biển số | `database_ready == True`; tra `WarmDatabaseMirror`/MySQL xác định `IN` hoặc `OUT`; không có face đạt chuẩn trong `1.80s` pre-latch lookback | `LATCHED` | Khởi tạo `LatchState` (`4.0s`), gắn `required_face_cam` (`3 - plate_cam` khi 2 cam, hoặc `plate_cam` khi 1 cam) |
+| `VOTING` / `LATCHED` | Đã có khuôn mặt đạt chuẩn (`pre-latch lookback <= 1.80s` hoặc đúng `required_face_cam` đạt tier `>= 22.0` tức thì / sau `0.15s`, hoặc sàn `>= 15.0` sau `0.40s`) | Biển số đã đạt đồng thuận; `plate_key` chưa nằm trong `committing_plates` | `COMMITTING` (hoặc `SECURITY_ALERT`) | Thêm `plate_key` vào `committing_plates`; nếu `OUT` và `cosine_similarity < 0.65` (hoặc thiếu embedding vào) -> chuyển `SECURITY_ALERT`; ngược lại đẩy vào `ThreadPoolExecutor(max_workers=1)` |
+| `LATCHED` | Biển số khác xuất hiện trên `plate_cam` | `new_plate_key != latched.plate_key` | `IDLE` | Hủy Latch ngay, phát feedback `HỦY LƯU HỜ (ĐÃ ĐỔI XE MỚI)` |
+| `LATCHED` | Quá `LATCH_TIMEOUT_SECONDS` (`4.0s`) hoặc gọi `/api/camera/cancel-latch` | Chưa có mặt đạt chuẩn | `IDLE` | Hủy Latch; timeout báo `KHUÔN MẶT BỊ MỜ, VUI LÒNG QUÉT LẠI` (nếu từng thấy mặt) hoặc `THIẾU KHUÔN MẶT` |
+| `COMMITTING` | Async DB commit thành công | `session_id` khớp hoặc lệch (không hủy job đang ghi) | `COOLDOWN` | Cập nhật `WarmDatabaseMirror`, bump `records_version`, đặt cooldown `20.0s` cùng chiều & `6.0s` chiều ngược lại, thêm `plates_must_leave`, gỡ `committing_plates`, phát `VÀO/RA BÃI THÀNH CÔNG` |
+| `COMMITTING` | Async DB commit lỗi (`DatabaseOperationError`) | MySQL lỗi hoặc timeout | `IDLE` | Gỡ `committing_plates`, **không** đặt cooldown, phát feedback lỗi yêu cầu quét lại |
+| `COMMITTING` | Người dùng tắt camera / dừng server | Job đã submit vào `commit_executor` | `COMMITTING` -> `DONE` | **Bất biến**: không hủy future đang chạy; đợi commit hoàn tất an toàn khi shutdown |
+| `SECURITY_ALERT` | `/api/camera/resolve-alert` (`approve`) | MySQL ghi `OUT` thành công | `COOLDOWN` | Lưu `OUT` kèm `face_match_score` thực tế, đồng bộ `WarmDatabaseMirror`, xóa alert, đặt cooldown `20s`/`6s`, trả `camera_status` |
+| `SECURITY_ALERT` | `/api/camera/resolve-alert` (`approve`) | MySQL lỗi ghi DB | `SECURITY_ALERT` | **Giữ nguyên** `security_alert` để bảo vệ bấm duyệt lại được; trả `status: "db_error"` |
+| `SECURITY_ALERT` | `/api/camera/resolve-alert` (`reject`) | Bảo vệ từ chối | `IDLE` | Không ghi DB, xóa alert, không đặt cooldown `OUT`, báo `XE ... RA BÃI BỊ TỪ CHỐI` |
+
+---
+
 ## 3. Hợp đồng REST API (Bảo toàn tương thích)
 
 | Method | Endpoint | Mô tả |

@@ -10,7 +10,7 @@ from unittest import mock
 import pytest
 
 from src.backend.config import Settings
-from src.backend.domain.face_math import embedding_from_bytes, embedding_to_bytes
+from src.backend.domain.face_math import embedding_from_bytes
 from src.backend.domain.plate_normalizer import clean_plate_key
 from src.backend.storage import (
     DEMO_MARKER_PLATE_KEY,

@@ -6,8 +6,6 @@ from datetime import datetime, timedelta
 import threading
 from unittest import mock
 
-import pytest
-
 from src.backend.domain.face_math import embedding_to_bytes
 from src.backend.storage import WarmDatabaseMirror
 

@@ -3,7 +3,7 @@
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
 **Giai đoạn hiện tại:** Hoàn tất Phase 2 (`T2.1`–`T2.6` — MySQL Storage, WarmDatabaseMirror, Demo Seeder & API Presenters)  
-**Trạng thái tổng thể:** `17 / 27` tasks hoàn tất (+ 5/5 trụ cột AI-Native) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`38 passed in 0.79s`). Sẵn sàng bước vào **Phase 3 (T3.1–T3.7: AI Adapters & Services Điều phối)**.
+**Trạng thái tổng thể:** `17 / 27` tasks hoàn tất (+ 5/5 trụ cột AI-Native nâng cấp 6 cổng) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`42 passed in 0.89s`). Sẵn sàng bước vào **Phase 3 (T3.1–T3.7: AI Adapters & Services Điều phối)**.
 
 ---
 
@@ -25,7 +25,12 @@
 - **[Phase 2 — T2.1 -> T2.6]** Hoàn tất tầng Storage & Presentation:
   - `src/backend/storage/{exceptions,mysql_client,migrations,query_helpers,sql_queries,repository,mirror_helpers,warm_mirror,demo_seeder}.py` (tất cả `<= 334` dòng, trả về raw domain dicts thuần theo ADR-01 & ADR-02).
   - `src/backend/api/presenters.py` (`156` dòng, định dạng nhãn tiếng Việt chuẩn `schemas/gate_payloads.schema.json`).
-  - Bộ test offline (`test_presenters.py`, `test_mysql_repository.py`, `test_warm_mirror.py`) nâng tổng số test pass lên `38 / 38`.
+  - Bộ test offline (`test_presenters.py`, `test_mysql_repository.py`, `test_warm_mirror.py`, plus polish & `test_schema_contract_drift.py`) nâng tổng số test pass lên `42 / 42`.
+- **[AI-Native Hardening (10/10)]**:
+  - Cài thêm 2 global skills từ `obra/superpowers`: `verification-before-completion`, `test-driven-development`.
+  - Bổ sung 2 project skills: `.agents/skills/datn2-contract-guard/SKILL.md`, `.agents/skills/datn2-cv-eval/SKILL.md`.
+  - Bổ sung Section `2.1` Bảng chuyển trạng thái Two-Phase Latch / Async Commit / Security Alert vào `spec.md`.
+  - Cấu hình `ruff` (`pyproject.toml`, `.github/workflows/ci.yml`), nâng `scripts/verify.ps1` lên 6 cổng và khóa Schema/API Drift bằng `tests/unit/test_schema_contract_drift.py`.
 - Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
 
 ---

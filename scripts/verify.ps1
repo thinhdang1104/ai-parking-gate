@@ -40,19 +40,45 @@ try {
     $Python = Resolve-PythonInterpreter
     Write-Host "Using Python: $Python" -ForegroundColor DarkGray
 
-    Write-Host "=== [1/5] Python syntax check (compileall) ===" -ForegroundColor Cyan
+    Write-Host "=== [1/6] Python syntax check (compileall) ===" -ForegroundColor Cyan
     & $Python -m compileall -q src tests
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Write-Host "=== [2/5] Architecture & size guardrails ===" -ForegroundColor Cyan
+    Write-Host "=== [2/6] Architecture & size guardrails ===" -ForegroundColor Cyan
     & $Python scripts/check_guardrails.py
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Write-Host "=== [3/5] Schema & MCP config validation ===" -ForegroundColor Cyan
+    Write-Host "=== [3/6] Schema & MCP config validation ===" -ForegroundColor Cyan
     & $Python scripts/validate_schemas.py
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Write-Host "=== [4/5] Frontend JS syntax check ===" -ForegroundColor Cyan
+    Write-Host "=== [4/6] Python static lint (ruff) ===" -ForegroundColor Cyan
+    $RuffCmd = Get-Command ruff -ErrorAction SilentlyContinue
+    if ($RuffCmd) {
+        & $RuffCmd.Source check src tests scripts
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    } else {
+        $HasPythonRuff = $false
+        $PrevPref = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        try {
+            & $Python -m ruff --version *> $null
+            if ($LASTEXITCODE -eq 0) {
+                $HasPythonRuff = $true
+            }
+        }
+        finally {
+            $ErrorActionPreference = $PrevPref
+        }
+        if ($HasPythonRuff) {
+            & $Python -m ruff check src tests scripts
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        } else {
+            Write-Host "SKIP: ruff not installed (pip install ruff)" -ForegroundColor Yellow
+        }
+    }
+
+    Write-Host "=== [5/6] Frontend JS syntax check ===" -ForegroundColor Cyan
     $JsFiles = Get-ChildItem -Path "src\frontend\js" -Filter "*.js" -Recurse -ErrorAction SilentlyContinue
     if ($JsFiles) {
         $NodeCmd = Get-Command node -ErrorAction SilentlyContinue
@@ -69,7 +95,7 @@ try {
         Write-Host "SKIP: no JS files yet" -ForegroundColor DarkGray
     }
 
-    Write-Host "=== [5/5] Automated tests (pytest) ===" -ForegroundColor Cyan
+    Write-Host "=== [6/6] Automated tests (pytest) ===" -ForegroundColor Cyan
     $TestFiles = Get-ChildItem -Path "tests" -Filter "test_*.py" -Recurse -ErrorAction SilentlyContinue
     if ($TestFiles) {
         & $Python -m pytest
