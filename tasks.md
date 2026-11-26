@@ -20,12 +20,12 @@
 - [x] **T1.6** Viết unit tests cho toàn bộ tầng Domain (`tests/unit/test_*.py`) — *Deps: T1.3, T1.4, T1.5* · *Verify: `pytest tests/unit/` pass 100%*
 
 ## Phase 2: Tầng Lưu trữ MySQL, WarmDatabaseMirror & Presenter
-- [ ] **T2.1** Viết `src/backend/storage/exceptions.py`, `mysql_client.py` (direct connect + timeouts + `now_vn`) và `migrations.py` — *Deps: T1.1*
-- [ ] **T2.2** Viết `src/backend/storage/repository.py` (insert, find_active_session, fetch_overview, fetch_revenue_report, fetch_parking_session_case — trả raw dicts) — *Deps: T2.1, T1.3, T1.5*
-- [ ] **T2.3** Viết `src/backend/storage/warm_mirror.py` (RAM mirror đồng bộ 1-1, giới hạn 600 ảnh, fallback MySQL) — *Deps: T2.2*
-- [ ] **T2.4** Viết `src/backend/storage/demo_seeder.py` (nạp 38 bản ghi mẫu khi `SEED_DEMO_DATA=1`) — *Deps: T2.2*
-- [ ] **T2.5** Viết `src/backend/api/presenters.py` (định dạng nhãn tiếng Việt chuẩn API `format_record_row`, `format_vnd`, `format_match_label`, ...) — *Deps: T1.2*
-- [ ] **T2.6** Viết tests cho Presenter, Repository & WarmDatabaseMirror (`tests/unit/test_presenters.py`, `tests/integration/test_mysql_repository.py`, `tests/integration/test_warm_mirror.py`) — *Deps: T2.3, T2.4, T2.5* · *Verify: `pytest` pass 100%*
+- [x] **T2.1** Viết `src/backend/storage/exceptions.py`, `mysql_client.py` (direct connect + timeouts + `now_vn`) và `migrations.py` — *Deps: T1.1*
+- [x] **T2.2** Viết `src/backend/storage/repository.py` (insert, find_active_session, fetch_overview, fetch_revenue_report, fetch_parking_session_case — trả raw dicts) — *Deps: T2.1, T1.3, T1.5*
+- [x] **T2.3** Viết `src/backend/storage/warm_mirror.py` (RAM mirror đồng bộ 1-1, giới hạn 600 ảnh, fallback MySQL) — *Deps: T2.2*
+- [x] **T2.4** Viết `src/backend/storage/demo_seeder.py` (nạp 38 bản ghi mẫu khi `SEED_DEMO_DATA=1`) — *Deps: T2.2*
+- [x] **T2.5** Viết `src/backend/api/presenters.py` (định dạng nhãn tiếng Việt chuẩn API `format_record_row`, `format_vnd`, `format_match_label`, ...) — *Deps: T1.2*
+- [x] **T2.6** Viết tests cho Presenter, Repository & WarmDatabaseMirror (`tests/unit/test_presenters.py`, `tests/integration/test_mysql_repository.py`, `tests/integration/test_warm_mirror.py`) — *Deps: T2.3, T2.4, T2.5* · *Verify: `pytest` pass 100%*
 
 ## Phase 3: Tầng AI Adapters & Services Điều phối
 - [ ] **T3.1** Viết `src/backend/ai/plate_detector.py` (YOLOv8 plate + char detector, hỗ trợ batch 2 ảnh) — *Deps: T1.3, T1.5*
