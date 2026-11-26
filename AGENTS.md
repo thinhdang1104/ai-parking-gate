@@ -42,11 +42,15 @@ Mọi thay đổi mã nguồn đều tuân thủ 4 nguyên tắc sau:
 ## 3. Quy trình làm việc chuẩn (Spec-Driven Workflow)
 
 ```text
-1. Đọc progress.md & tasks.md -> chọn task tiếp theo có đủ dependency
-2. Đối chiếu yêu cầu chi tiết trong spec.md & thiết kế trong architecture.md
-3. Triển khai code trong src/ kèm unit/integration test tương ứng trong tests/
-4. Chạy harness kiểm chứng: .\scripts\verify.ps1 (compileall + guardrails + JS check + pytest)
-5. Cập nhật trạng thái trong tasks.md và ghi nhận tiến độ vào progress.md
+1. Nạp ngữ cảnh 2 tầng:
+   - Luôn đọc trước: progress.md, tasks.md, .agents/memory/decisions.md, .agents/memory/gotchas.md
+   - Chỉ đọc khi cần theo phạm vi task: mục liên quan trong spec.md / architecture.md, schemas/*, và file tham chiếu ở C:\Study\DATN
+2. Triển khai code trong src/ kèm unit/integration test tương ứng trong tests/
+3. Chạy harness kiểm chứng 6 cổng: .\scripts\verify.ps1 (compileall + guardrails + schema validation + ruff + JS check + pytest) -> phải đạt VERIFY PASSED
+4. Cổng kết thúc Phase (Review-Fix Loop):
+   - Đọc & review lại 100% mã nguồn và test của Phase vừa làm
+   - Nếu còn bất kỳ điểm chưa ổn nào (logic, edge case, encapsulation, lint, contract drift, thiếu test) -> sửa dứt điểm và lặp lại bước 3–4 cho tới khi review hoàn toàn tốt & VERIFY PASSED
+   - Chỉ khi đã ổn và tốt mới cập nhật tasks.md, progress.md, rồi commit & push lên GitHub (origin main) trước khi sang Phase tiếp theo
 ```
 
 ---
