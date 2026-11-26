@@ -2,8 +2,8 @@
 
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
-**Giai đoạn hiện tại:** Hoàn tất Phase 5 (`T5.1`–`T5.5` — Frontend HTML, 4 CSS & 11 Vanilla ES Modules)  
-**Trạng thái tổng thể:** `32 / 36` tasks trong kế hoạch (`32` đã xong ở Phases 0–5, còn Phase 6: `4` tasks) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`JS SYNTAX OK (11 files)`, `63 passed in 0.99s`) kèm kiểm thử trình duyệt thực tế 3 màn hình không lỗi console. Sẵn sàng chuyển sang **Phase 6 (T6.1–T6.4: Training Scripts, Local MySQL & Nghiệm thu)**.
+**Giai đoạn hiện tại:** Hoàn tất toàn bộ kế hoạch tái cấu trúc (`Phases 0–6`, `T0.1`–`T6.4` — Nghiệm thu hệ thống)  
+**Trạng thái tổng thể:** `36 / 36` tasks trong kế hoạch (**100% hoàn thành**) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`compileall`, `GUARDRAILS OK`, `SCHEMAS OK`, `JS SYNTAX OK (11 files)`, `67 passed in 1.62s`), đã kiểm chứng smoke test MySQL thực tế + model AI (`plate_best.pt`, `chars_best.pt`, FaceNet 512-D) + 3 màn hình trình duyệt.
 
 ---
 
@@ -44,17 +44,20 @@
   - `src/frontend/index.html` & `src/frontend/css/{tokens,layout,components,camera}.css`: Giữ nguyên 100% DOM IDs (`114`), classes (`229`), selectors CSS (`189`) và bố cục Dark Mode của bản gốc.
   - `src/frontend/js/{api,state,utils,overlay,gate_ui,camera,history,revenue,lost_case_modal,pdf_export,main}.js`: Tách sạch `app.js` (3.383 dòng) thành 11 Vanilla ES Modules không vòng lặp import (`ImportErrors=0, HasCycle=False`).
   - `tests/integration/test_api_routes.py`: Bổ sung `test_real_frontend_serves_html_css_and_es_modules` xác minh toàn bộ `/`, `/ui`, 4 CSS và 11 JS module trả về HTTP 200; kiểm thử trình duyệt trực tiếp trên `http://127.0.0.1:8000/` xác nhận 3 màn hình và toàn bộ asset/API hoạt động sạch, không lỗi console.
-- Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
+- **[Phase 6 — T6.1 -> T6.4] Hoàn tất Training Scripts, Smoke Test Thực tế & Nghiệm thu (`VERIFY PASSED`, `67 passed in 1.62s`)**:
+  - `src/training/{__init__,train_plates,train_chars}.py` + `tests/unit/test_training_scripts.py`: Hoàn thiện script huấn luyện YOLOv8 biển số & ký tự giữ nguyên siêu tham số chuẩn và bổ sung CLI arguments, lazy-import `torch`/`ultralytics`.
+  - Smoke test thực tế qua `lifespan` (`create_app(..., enable_lifespan_startup=True)`): kết nối thành công CSDL MySQL thực tế (`ensure_schema()` + `WarmDatabaseMirror` nạp `122` bản ghi, `15` xe đang gửi, `138.000 đ` doanh thu tích lũy), tải thành công `PlateDetector` (`plate_best.pt`, `chars_best.pt`) và `FaceService` (`InceptionResnetV1 vggface2`, `can_embed=True`), kiểm tra HTTP `200` trên `/`, `/api/health` (`status: "ok"`), `/api/metrics`, `/api/camera/status`, `/api/management/overview`.
+- Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào** (`git -C C:\Study\DATN status --short` trống).
 
 ---
 
 ## 2. Việc đang làm
-- Hoàn tất nghiệm thu **Phase 5** và chuẩn bị triển khai **Phase 6 (`T6.1`–`T6.4`)**: Training scripts, kiểm chứng Local MySQL & nghiệm thu cuối cùng.
+- Hoàn tất toàn bộ **Phases 0–6 (`36 / 36` tasks)**; hệ thống sẵn sàng vận hành cục bộ.
 
 ---
 
 ## 3. Bước tiếp theo ngay sau khi được duyệt
-1. **[Phase 6 — T6.1 -> T6.4]** Sao chép/cập nhật `src/training/train_{plates,chars}.py`, kiểm chứng kết nối thực tế Local MySQL (MySQL Workbench), chạy toàn bộ test & đối chiếu nghiệm thu cuối cùng theo `spec.md`.
+- Hệ thống đã hoàn thiện theo `spec.md` và `architecture.md`. Có thể chạy trực tiếp bằng `.env` trỏ tới MySQL Local/Aiven và lệnh `python -m src.backend.main` (hoặc `python -m uvicorn src.backend.main:app --host 127.0.0.1 --port 8000`).
 
 ---
 

@@ -49,7 +49,7 @@
 - [x] **T5.5** Kiểm tra cú pháp JS & kiểm thử trực quan toàn bộ 3 màn hình + Modal + PDF trên trình duyệt — *Deps: T5.3, T5.4*
 
 ## Phase 6: Training Scripts, Kiểm chứng Local MySQL & Nghiệm thu
-- [ ] **T6.1** Sao chép/cập nhật `src/training/train_plates.py`, `src/training/train_chars.py` — *Deps: T0.4*
-- [ ] **T6.2** Kiểm thử kết nối thực tế Local MySQL (MySQL Workbench), xác nhận auto-migration bảng `plate_recognition_history` và chạy smoke test server local — *Deps: T4.2, T5.4*
-- [ ] **T6.3** Chạy kiểm chứng toàn diện (`python -m compileall src tests`, `pytest tests/`) — *Deps: T6.1, T6.2*
-- [ ] **T6.4** Rà soát 100% đối chiếu với `spec.md`, cập nhật `progress.md` và xác nhận `C:\Study\DATN` không bị thay đổi — *Deps: T6.3*
+- [x] **T6.1** Sao chép/cập nhật `src/training/train_plates.py`, `src/training/train_chars.py` — *Deps: T0.4*
+- [x] **T6.2** Kiểm thử kết nối thực tế Local MySQL (MySQL Workbench), xác nhận auto-migration bảng `plate_recognition_history` và chạy smoke test server local — *Deps: T4.2, T5.4*
+- [x] **T6.3** Chạy kiểm chứng toàn diện (`python -m compileall src tests`, `pytest tests/`) — *Deps: T6.1, T6.2*
+- [x] **T6.4** Rà soát 100% đối chiếu với `spec.md`, cập nhật `progress.md` và xác nhận `C:\Study\DATN` không bị thay đổi — *Deps: T6.3*
