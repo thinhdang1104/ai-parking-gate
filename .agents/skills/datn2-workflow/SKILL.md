@@ -25,4 +25,5 @@ Follow this strict loop for every task in `C:\Study\DATN2`:
    - Run `.\scripts\verify.ps1` and require `VERIFY PASSED` (all 5 gates: `compileall`, `check_guardrails.py`, `validate_schemas.py`, `node --check`, `pytest`).
    - Perform hands-on QA (API / browser / DB check) for user-facing changes.
    - Only then mark `[x]` in `tasks.md` and log progress in `progress.md`.
+   - After each phase passes full code review and `.\scripts\verify.ps1` (`VERIFY PASSED`), commit and push cleanly to `origin main` before starting the next phase.
 5. **Memory Update**: Record any new architectural decision in `.agents/memory/decisions.md` and any non-obvious bug/pitfall in `.agents/memory/gotchas.md`.

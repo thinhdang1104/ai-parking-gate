@@ -2,8 +2,8 @@
 
 **Repository:** https://github.com/thinhdang1104/ai-parking-gate  
 **Cập nhật lần cuối:** 2026-11-26  
-**Giai đoạn hiện tại:** Hoàn tất Nền tảng AI-Native (5 trụ cột) & Tài liệu nền (`Phase 0`)  
-**Trạng thái tổng thể:** `3 / 27` tasks ứng dụng + **5/5 trụ cột AI-Native** hoàn tất và vượt qua `.\scripts\verify.ps1` (`VERIFY PASSED`, 8/8 unit tests observability) — đang dừng chờ người dùng review trước khi bắt đầu T0.3–T0.4 & Phase 1.
+**Giai đoạn hiện tại:** Hoàn tất Phase 0 (`T0.3`–`T0.4`) & Phase 1 (`T1.1`–`T1.6` — Config & Domain Core)  
+**Trạng thái tổng thể:** `11 / 27` tasks hoàn tất (+ 5/5 trụ cột AI-Native) — `.\scripts\verify.ps1` đạt **`VERIFY PASSED`** (`24 passed in 0.87s`). Sẵn sàng bước vào **Phase 2 (T2.1–T2.6: MySQL Storage, WarmDatabaseMirror & Presenter)**.
 
 ---
 
@@ -20,19 +20,20 @@
   3. **MCP Servers**: `.agents/mcp_config.json` (MySQL read-only MCP + GitHub MCP dùng biến môi trường, không hardcode secret).
   4. **Test & CI/CD**: `.github/workflows/ci.yml`, `scripts/validate_schemas.py`, nâng cấp `scripts/verify.ps1` thành 5 cổng tự động nhận diện Python có `pytest`.
   5. **Docker & Observability**: `Dockerfile`, `docker-compose.yml`, `docker-compose.gpu.yml`, `.dockerignore`, `src/backend/observability/{logging_config.py,metrics.py}` + `tests/unit/test_observability.py` (8/8 pass).
+- **[T0.3 & T0.4]** Sao chép tài nguyên chỉ đọc từ `C:\Study\DATN` (`weights/plate_best.pt`, `weights/chars_best.pt`, `datasets/*/data.yaml`, `requirements.txt`), tạo `.env.example` & `.gitignore`, khởi tạo cây package `src/backend/`, `src/frontend/`, `src/training/`, `tests/`.
+- **[Phase 1 — T1.1 -> T1.6]** Hoàn tất tầng cấu hình & Domain thuần (`config.py`, `domain/{models,plate_normalizer,plate_assembly,voting,face_math,image_utils}.py`) cùng 16 unit tests mới trong `tests/unit/` (tổng `24 / 24` tests pass, guardrails `<= 400` dòng/file & domain purity đạt 100%).
 - Xác nhận dự án gốc `C:\Study\DATN` **không bị chỉnh sửa bất kỳ file nào**.
 
 ---
 
 ## 2. Việc đang làm
-- Dừng chờ người dùng review toàn bộ **5 trụ cột nền tảng AI-Native** trước khi bắt đầu **Phase 0 (T0.3–T0.4)** và **Phase 1 (Domain Core)**.
+- Sẵn sàng triển khai **Phase 2 (`T2.1`–`T2.6`)**: Tầng Lưu trữ MySQL, `WarmDatabaseMirror`, Demo Seeder & Vietnamese API Presenters.
 
 ---
 
 ## 3. Bước tiếp theo ngay sau khi được duyệt
-1. **[T0.3]** Copy các tài nguyên chỉ đọc từ `C:\Study\DATN` sang `C:\Study\DATN2` (`weights/*.pt`, `datasets/*/data.yaml`, `.env.example`, `requirements.txt`, `.gitignore`).
-2. **[T0.4]** Tạo khung package `src/backend/`, `src/frontend/`, `src/training/`, `tests/`.
-3. **[Phase 1 — T1.1 -> T1.6]** Xây dựng `config.py` và toàn bộ tầng `src/backend/domain/` kèm bộ unit test vượt qua 100%.
+1. **[Phase 2 — T2.1 -> T2.6]** Viết `src/backend/storage/{exceptions,mysql_client,migrations,repository,warm_mirror,demo_seeder}.py`, `src/backend/api/presenters.py` và bộ tests tích hợp/unit tương ứng.
+2. **[Phase 3 — T3.1 -> T3.7]** Viết AI Adapters & Services điều phối (`CameraSessionManager`, `LatchCoordinator`, `ManagementService`, `GateService`).
 
 ---
 

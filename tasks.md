@@ -8,16 +8,16 @@
 - [x] **T0.1** Rà soát toàn bộ codebase gốc tại `C:\Study\DATN` (backend, database, face_service, frontend, tests, deploy) — *Deps: none*
 - [x] **T0.2** Viết bộ tài liệu nền tảng (`AGENTS.md`, `spec.md`, `architecture.md`, `plan.md`, `tasks.md`, `progress.md`, `README.md`) và tạo thư mục `src/`, `tests/` tại `C:\Study\DATN2` — *Deps: T0.1*
 - [x] **T0.2b** Thiết lập Verification Harness (`pyproject.toml`, `scripts/check_guardrails.py`, `scripts/verify.ps1`) — *Deps: T0.2* · *Verify: `.\scripts\verify.ps1` trả `VERIFY PASSED`*
-- [ ] **T0.3** Sao chép tài nguyên chỉ đọc từ `C:\Study\DATN` sang `C:\Study\DATN2` (`weights/*.pt`, `datasets/*/data.yaml`, `.env.example`, `requirements.txt`, `.gitignore`) — *Deps: T0.2b* · *Verify: tồn tại đủ file weights & config*
-- [ ] **T0.4** Khởi tạo cây package `src/backend/`, `src/frontend/`, `src/training/`, `tests/` — *Deps: T0.3*
+- [x] **T0.3** Sao chép tài nguyên chỉ đọc từ `C:\Study\DATN` sang `C:\Study\DATN2` (`weights/*.pt`, `datasets/*/data.yaml`, `.env.example`, `requirements.txt`, `.gitignore`) — *Deps: T0.2b* · *Verify: tồn tại đủ file weights & config*
+- [x] **T0.4** Khởi tạo cây package `src/backend/`, `src/frontend/`, `src/training/`, `tests/` — *Deps: T0.3*
 
 ## Phase 1: Cấu hình & Tầng Domain Thuần
-- [ ] **T1.1** Viết `src/backend/config.py` (gom toàn bộ hằng số ngưỡng AI, Latch, Cooldown, Fee, Cache, Env) — *Deps: T0.4*
-- [ ] **T1.2** Viết `src/backend/domain/models.py` (dataclasses cho `FaceDetection`, `PlateBox`, `VoteResult`, `LatchState`, `SecurityAlert`, `ParkingRecord`) — *Deps: T1.1*
-- [ ] **T1.3** Viết `src/backend/domain/plate_normalizer.py` & `plate_assembly.py` (IoU dedup, 1/2 dòng, chuẩn hóa biển VN, `clean_plate_key`) — *Deps: T1.2*
-- [ ] **T1.4** Viết `src/backend/domain/voting.py` (Majority Voting & Fast-Confirm) — *Deps: T1.2*
-- [ ] **T1.5** Viết `src/backend/domain/face_math.py` & `image_utils.py` (Cosine similarity, bytes serialization 512-D, Laplacian sharpness vùng lõi 70%, xếp hạng độ nét, crop JPEG, decode base64, disk snapshot) — *Deps: T1.2*
-- [ ] **T1.6** Viết unit tests cho toàn bộ tầng Domain (`tests/unit/test_*.py`) — *Deps: T1.3, T1.4, T1.5* · *Verify: `pytest tests/unit/` pass 100%*
+- [x] **T1.1** Viết `src/backend/config.py` (gom toàn bộ hằng số ngưỡng AI, Latch, Cooldown, Fee, Cache, Env) — *Deps: T0.4*
+- [x] **T1.2** Viết `src/backend/domain/models.py` (dataclasses cho `FaceDetection`, `PlateBox`, `VoteResult`, `LatchState`, `SecurityAlert`, `ParkingRecord`) — *Deps: T1.1*
+- [x] **T1.3** Viết `src/backend/domain/plate_normalizer.py` & `plate_assembly.py` (IoU dedup, 1/2 dòng, chuẩn hóa biển VN, `clean_plate_key`) — *Deps: T1.2*
+- [x] **T1.4** Viết `src/backend/domain/voting.py` (Majority Voting & Fast-Confirm) — *Deps: T1.2*
+- [x] **T1.5** Viết `src/backend/domain/face_math.py` & `image_utils.py` (Cosine similarity, bytes serialization 512-D, Laplacian sharpness vùng lõi 70%, xếp hạng độ nét, crop JPEG, decode base64, disk snapshot) — *Deps: T1.2*
+- [x] **T1.6** Viết unit tests cho toàn bộ tầng Domain (`tests/unit/test_*.py`) — *Deps: T1.3, T1.4, T1.5* · *Verify: `pytest tests/unit/` pass 100%*
 
 ## Phase 2: Tầng Lưu trữ MySQL, WarmDatabaseMirror & Presenter
 - [ ] **T2.1** Viết `src/backend/storage/exceptions.py`, `mysql_client.py` (direct connect + timeouts + `now_vn`) và `migrations.py` — *Deps: T1.1*
