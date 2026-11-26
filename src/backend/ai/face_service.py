@@ -103,7 +103,7 @@ class FaceService:
 
         inv_scale = 1.0 / scale
         results: list[FaceDetection] = []
-        for raw_box, probability in zip(boxes, probabilities):
+        for raw_box, probability in zip(boxes, probabilities, strict=False):
             if probability is None or np.isnan(probability):
                 continue
             x1, y1, x2, y2 = [int(round(float(val) * inv_scale)) for val in raw_box]

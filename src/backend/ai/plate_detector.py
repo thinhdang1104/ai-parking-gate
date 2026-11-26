@@ -192,5 +192,5 @@ class PlateDetector:
         )
         return [
             self.extract_from_result(frame, res)
-            for frame, res in zip(frame_list, results)
+            for frame, res in zip(frame_list, results, strict=False)
         ]
